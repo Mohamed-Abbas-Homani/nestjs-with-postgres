@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -24,10 +24,10 @@ export class UsersService {
     return await this.userRepository.findOne({ where: { email } });
   }
 
-  async getAllUsers() : Promise<User[]>{
+  async getAllUsers(): Promise<User[]> {
     return await this.userRepository.find();
   }
-  
+
   //Compare Password
   async comparePassword(
     plainPassword: string,
@@ -39,5 +39,25 @@ export class UsersService {
   //Generate Token
   createToken(id: string): string {
     return jwt.sign({ id }, process.env.JWT_SECRET);
+  }
+
+  //Request Validation
+  isRequestBodyValid(email: string, password: string) : boolean {
+    return this.isEmailValid(email) && this.isPasswordValid(password)
+  }
+
+  //Email Validation
+  private isEmailValid(email: string): boolean {
+    // Regular expression for validating email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  //Password Validation
+  isPasswordValid(password: string): boolean {
+    // Password must be at least 8 characters long and contain at least one letter, one number, and one special character.
+    const passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
+    return passwordRegex.test(password);
   }
 }

@@ -22,9 +22,11 @@ export class UsersController {
   async signUp(
     @Body('email') email: string,
     @Body('password') password: string,
-  ) : Promise<SignUpResponse> {
+  ): Promise<SignUpResponse> {
     //Request Validation
-    this.validateRequestBody(email, password);
+    if (!this.usersService.isRequestBodyValid(email, password)) {
+      throw new BadRequestException('Invalid email or password');
+    }
 
     //Check if user already exist
     const existingUser = await this.usersService.findByEmail(email);
@@ -44,9 +46,11 @@ export class UsersController {
   async login(
     @Body('email') email: string,
     @Body('password') password: string,
-  ) : Promise<LoginResponse> {
+  ): Promise<LoginResponse> {
     //Request Validation
-    this.validateRequestBody(email, password);
+    if (!this.usersService.isRequestBodyValid(email, password)) {
+      throw new BadRequestException('Invalid email or password');
+    }
 
     //Check if user does not exist
     const existingUser = await this.usersService.findByEmail(email);
@@ -78,38 +82,12 @@ export class UsersController {
 
   //Get all users
   @Get()
-  async getUsers() : Promise<User[]>{
+  async getUsers(): Promise<User[]> {
     const users = await this.usersService.getAllUsers();
     if (users.length == 0) {
       throw new NotFoundException('No users found');
     }
 
     return users;
-  }
-
-  //Request Validation
-  private validateRequestBody(email: string, password: string) {
-    if (!this.isEmailValid(email)) {
-      throw new BadRequestException('Email is not valid');
-    }
-
-    if (!this.isPasswordValid(password)) {
-      throw new BadRequestException('Password is not valid');
-    }
-  }
-
-  //Email Validation
-  private isEmailValid(email: string): boolean {
-    // Regular expression for validating email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  //Password Validation
-  isPasswordValid(password: string): boolean {
-    // Password must be at least 8 characters long and contain at least one letter, one number, and one special character.
-    const passwordRegex =
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
-    return passwordRegex.test(password);
   }
 }
