@@ -37,7 +37,7 @@ export class UsersService {
   }
 
   //Generate Token
-  createToken(id: string): Promise<string> {
+  createToken(id: string): string {
     return jwt.sign({ id }, process.env.JWT_SECRET);
   }
 }

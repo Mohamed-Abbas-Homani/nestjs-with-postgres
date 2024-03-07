@@ -10,6 +10,8 @@ import {
   Get,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { LoginResponse, SignUpResponse } from './user.model';
+import { User } from './user.entity';
 
 @Controller('users')
 export class UsersController {
@@ -20,7 +22,7 @@ export class UsersController {
   async signUp(
     @Body('email') email: string,
     @Body('password') password: string,
-  ) {
+  ) : Promise<SignUpResponse> {
     //Request Validation
     this.validateRequestBody(email, password);
 
@@ -42,7 +44,7 @@ export class UsersController {
   async login(
     @Body('email') email: string,
     @Body('password') password: string,
-  ) {
+  ) : Promise<LoginResponse> {
     //Request Validation
     this.validateRequestBody(email, password);
 
@@ -76,14 +78,15 @@ export class UsersController {
 
   //Get all users
   @Get()
- async getUsers() {
-    const users =  await this.usersService.getAllUsers()
-    if(users.length == 0) {
-      throw new NotFoundException("No users found")
+  async getUsers() : Promise<User[]>{
+    const users = await this.usersService.getAllUsers();
+    if (users.length == 0) {
+      throw new NotFoundException('No users found');
     }
 
-    return users
+    return users;
   }
+
   //Request Validation
   private validateRequestBody(email: string, password: string) {
     if (!this.isEmailValid(email)) {
