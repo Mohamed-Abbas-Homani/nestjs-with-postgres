@@ -10,7 +10,7 @@ import {
   Get,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { LoginResponse, SignUpResponse } from './user.model';
+import { LoginResponse, SignUpResponse } from './user.interfaces';
 import { User } from './user.entity';
 
 @Controller('users')

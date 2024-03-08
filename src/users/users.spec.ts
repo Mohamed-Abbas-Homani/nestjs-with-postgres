@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { LoginResponse, SignUpResponse } from './user.model';
+import { LoginResponse, SignUpResponse } from './user.interfaces';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
 
